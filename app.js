@@ -67,7 +67,7 @@ app.get('/allocation-result/:id', async (req, res) => {
     
     if (!allocation) {
       req.flash('error', 'Allocation not found');
-      return res.redirect('/patient');
+      return res.redirect('/patients');
     }
     
     // Get patient ID if available
