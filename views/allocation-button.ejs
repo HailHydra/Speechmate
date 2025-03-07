@@ -1,0 +1,12 @@
+<!-- views/partials/allocation-button.ejs -->
+<form action="/allocation/allocate/<%= patient._id %>" method="GET" class="mt-4">
+  <button 
+    type="submit" 
+    class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded"
+  >
+    Allocate Therapist
+  </button>
+  <p class="text-sm text-gray-500 mt-1">
+    This will automatically match the patient with the most suitable therapist.
+  </p>
+</form>

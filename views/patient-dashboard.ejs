@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpeechCare - Patient Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      font-family: 'Arial', sans-serif;
+    }
+    
+    .dashboard-container {
+      max-width: 800px;
+      margin: 40px auto;
+      background-color: #222;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+    
+    .logo {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 20px;
+    }
+    
+    .patient-info-card, .therapist-info-card {
+      background-color: #333;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .btn-primary {
+      background-color: #5046e5;
+      border: none;
+    }
+    
+    .btn-primary:hover {
+      background-color: #4033c0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="dashboard-container">
+      <div class="logo">SpeechCare</div>
+      
+      <h2 class="mb-4">Patient Dashboard</h2>
+      
+      <div class="patient-info-card">
+        <h3><%= patient.name %></h3>
+        <p>Age: <%= patient.age %></p>
+        <p>Primary Condition: <%= patient.condition %></p>
+        
+        <% if (patient.additionalNeeds && patient.additionalNeeds.length > 0) { %>
+          <p>Additional Needs: <%= patient.additionalNeeds.join(', ') %></p>
+        <% } %>
+        
+        <p>Preferred Language: <%= patient.preferredLanguage %></p>
+      </div>
+      
+      <div class="therapist-info-card">
+        <h3>Assigned Therapist</h3>
+        <p>Name: <%= patient.assignedTherapist.name %></p>
+        <p>Specialties: <%= patient.assignedTherapist.specialties.join(', ') %></p>
+        
+        <h4 class="mt-3">Appointment Details</h4>
+        <p>Day: <%= patient.appointmentDay %></p>
+        <p>Time: <%= patient.appointmentTime %></p>
+        <p>Location: <%= patient.assignedTherapist.location %></p>
+      </div>
+      
+      <div class="mt-4">
+        <a href="/patients/register" class="btn btn-primary me-3">Schedule New Consultation</a>
+        <a href="/" class="btn btn-outline-light">Back to Home</a>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

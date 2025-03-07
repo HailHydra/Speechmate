@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpeechCare - AI Configuration</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      font-family: 'Arial', sans-serif;
+    }
+    
+    .config-container {
+      max-width: 800px;
+      margin: 40px auto;
+      background-color: #222;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+    
+    .logo {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 10px;
+    }
+    
+    .info-card {
+      background-color: #333;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 25px;
+    }
+    
+    .warning-message {
+      background-color: rgba(255, 193, 7, 0.2);
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 25px;
+    }
+    
+    .success-message {
+      background-color: rgba(25, 135, 84, 0.2);
+      border-left: 4px solid #198754;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 25px;
+    }
+    
+    .btn-primary {
+      background-color: #5046e5;
+      border: none;
+    }
+    
+    .btn-primary:hover {
+      background-color: #4033c0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="config-container">
+      <a href="/" class="text-decoration-none">
+        <div class="logo">SpeechCare</div>
+      </a>
+      
+      <h2 class="mb-4">AI Allocation Configuration</h2>
+      
+      <% if (status === 'missing') { %>
+        <div class="warning-message">
+          <h5><i class="bi bi-exclamation-triangle-fill me-2"></i>API Key Not Configured</h5>
+          <p class="mb-0">The OpenAI API key is missing or invalid. AI-powered therapist allocation is currently disabled.</p>
+        </div>
+      <% } else if (status === 'success') { %>
+        <div class="success-message">
+          <h5><i class="bi bi-check-circle-fill me-2"></i>API Key Configured Successfully</h5>
+          <p class="mb-0">AI-powered therapist allocation is enabled and working properly.</p>
+        </div>
+      <% } else if (status === 'error') { %>
+        <div class="warning-message">
+          <h5><i class="bi bi-exclamation-triangle-fill me-2"></i>API Key Error</h5>
+          <p class="mb-0">There was a problem with the provided API key: <%= errorMessage %></p>
+        </div>
+      <% } %>
+      
+      <div class="info-card">
+        <h4 class="mb-3">AI-Powered Allocation</h4>
+        <p>SpeechCare can use OpenAI's API to provide advanced patient-therapist matching. This feature:</p>
+        <ul>
+          <li>Analyzes complex patient needs and therapist capabilities</li>
+          <li>Considers multiple factors simultaneously</li>
+          <li>Provides detailed explanations for matches</li>
+          <li>Improves match quality for complex cases</li>
+        </ul>
+      </div>
+      
+      <form action="/config/openai" method="POST" class="mt-4">
+        <div class="mb-3">
+          <label for="apiKey" class="form-label">OpenAI API Key</label>
+          <input type="password" class="form-control bg-dark text-light" id="apiKey" name="apiKey" 
+                 placeholder="sk-..." value="<%= currentKey || '' %>">
+          <div class="form-text text-light opacity-75">Your API key will be stored securely in your .env file.</div>
+        </div>
+        
+        <div class="mb-3">
+          <label for="model" class="form-label">OpenAI Model</label>
+          <select class="form-select bg-dark text-light" id="model" name="model">
+            <option value="gpt-4-turbo" <%= currentModel === 'gpt-4-turbo' ? 'selected' : '' %>>GPT-4 Turbo (Recommended)</option>
+            <option value="gpt-4" <%= currentModel === 'gpt-4' ? 'selected' : '' %>>GPT-4</option>
+            <option value="gpt-3.5-turbo" <%= currentModel === 'gpt-3.5-turbo' ? 'selected' : '' %>>GPT-3.5 Turbo (Faster, less accurate)</option>
+          </select>
+        </div>
+        
+        <div class="d-grid gap-2">
+          <button type="submit" class="btn btn-primary">Save Configuration</button>
+        </div>
+      </form>
+      
+      <% if (status === 'missing') { %>
+        <div class="mt-4 info-card">
+          <h5>Using Standard Allocation</h5>
+          <p>The system is currently using the standard rule-based allocation algorithm. This will:</p>
+          <ul>
+            <li>Match based on specialties, availability, and capacity</li>
+            <li>Use a scoring system to find the best possible match</li>
+            <li>Work reliably without requiring external API access</li>
+          </ul>
+          <p class="mb-0">This is sufficient for most cases, but AI-powered allocation can provide better matches for complex cases.</p>
+        </div>
+      <% } %>
+      
+      <div class="text-center mt-4">
+        <a href="/admin/dashboard" class="btn btn-outline-light">Return to Admin Dashboard</a>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

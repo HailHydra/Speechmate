@@ -1,0 +1,213 @@
+<!-- views/allocation-result.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Allocation Result</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <div class="py-8 px-4">
+    <div class="max-w-4xl mx-auto">
+      <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <!-- Header -->
+        <div class="bg-blue-600 text-white px-6 py-4">
+          <div class="flex justify-between items-center">
+            <h1 class="text-xl font-bold">Allocation Result</h1>
+            <div class="flex items-center space-x-2">
+              <% if (allocation.matchQuality || allocation.matchScore) { %>
+                <% 
+                  let badgeColor = '';
+                  let badgeLabel = '';
+                  
+                  if (allocation.matchQuality) {
+                    switch(allocation.matchQuality.toLowerCase()) {
+                      case 'high':
+                        badgeColor = 'bg-green-100 text-green-800';
+                        badgeLabel = 'High Match';
+                        break;
+                      case 'medium':
+                        badgeColor = 'bg-yellow-100 text-yellow-800';
+                        badgeLabel = 'Medium Match';
+                        break;
+                      case 'low':
+                        badgeColor = 'bg-red-100 text-red-800';
+                        badgeLabel = 'Low Match';
+                        break;
+                      default:
+                        badgeColor = 'bg-gray-100 text-gray-800';
+                        badgeLabel = allocation.matchQuality;
+                    }
+                  } else if (allocation.matchScore) {
+                    if (allocation.matchScore >= 75) {
+                      badgeColor = 'bg-green-100 text-green-800';
+                      badgeLabel = `Strong Match (${allocation.matchScore}%)`;
+                    } else if (allocation.matchScore >= 50) {
+                      badgeColor = 'bg-yellow-100 text-yellow-800';
+                      badgeLabel = `Good Match (${allocation.matchScore}%)`;
+                    } else {
+                      badgeColor = 'bg-red-100 text-red-800';
+                      badgeLabel = `Basic Match (${allocation.matchScore}%)`;
+                    }
+                  }
+                %>
+                <span class="px-2 py-1 rounded-full text-xs font-medium <%= badgeColor %>">
+                  <%= badgeLabel %>
+                </span>
+              <% } %>
+              <span class="ml-2 text-sm bg-blue-200 text-blue-800 px-2 py-1 rounded-full">
+                <%= allocation.success ? "Successful" : "Failed" %>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <% if (!allocation.success) { %>
+          <!-- Error state -->
+          <div class="p-6 text-center">
+            <div class="flex items-center justify-center text-yellow-500 mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <h2 class="text-center text-xl font-bold text-gray-900 mb-2">Allocation Unsuccessful</h2>
+            <p class="text-center text-gray-600 mb-6">
+              <%= allocation.message || "No suitable therapist could be found for the patient." %>
+            </p>
+            <div class="flex justify-center">
+              <a href="/patients" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded transition duration-150">
+                Return to Patients
+              </a>
+            </div>
+          </div>
+        <% } else { %>
+          <!-- Allocation details -->
+          <div class="p-6">
+            <!-- Method used -->
+            <div class="mb-6">
+              <p class="text-sm text-gray-500 mb-1">Allocation Method:</p>
+              <p class="font-medium">
+                <%= allocation.matchReason ? "LLM-Based Allocation" : "Rule-Based Allocation" %>
+              </p>
+            </div>
+
+            <!-- Two column layout for details -->
+            <div class="grid md:grid-cols-2 gap-6">
+              <!-- Left column - Therapist info -->
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <h2 class="text-lg font-semibold mb-4">Assigned Therapist</h2>
+                <% if (allocation.therapist) { %>
+                  <div class="space-y-3">
+                    <div>
+                      <p class="text-sm text-gray-500 mb-1">Name:</p>
+                      <p class="font-medium"><%= allocation.therapist.name %></p>
+                    </div>
+                    
+                    <div>
+                      <p class="text-sm text-gray-500 mb-1">Specialties:</p>
+                      <div class="flex flex-wrap gap-1">
+                        <% if (allocation.therapist.specialties && allocation.therapist.specialties.length > 0) { %>
+                          <% allocation.therapist.specialties.forEach(function(specialty) { %>
+                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                              <%= specialty %>
+                            </span>
+                          <% }); %>
+                        <% } else { %>
+                          <span class="text-gray-500">None specified</span>
+                        <% } %>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <p class="text-sm text-gray-500 mb-1">Location:</p>
+                      <p><%= allocation.therapist.location || "Not specified" %></p>
+                    </div>
+                    
+                    <div>
+                      <p class="text-sm text-gray-500 mb-1">Languages:</p>
+                      <div class="flex flex-wrap gap-1">
+                        <% if (allocation.therapist.languages && allocation.therapist.languages.length > 0) { %>
+                          <% allocation.therapist.languages.forEach(function(language) { %>
+                            <span class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">
+                              <%= language %>
+                            </span>
+                          <% }); %>
+                        <% } else { %>
+                          <span class="text-gray-500">None specified</span>
+                        <% } %>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <p class="text-sm text-gray-500 mb-1">Caseload:</p>
+                      <p><%= allocation.therapist.currentCaseload %> / <%= allocation.therapist.maxCaseload %></p>
+                    </div>
+                  </div>
+                <% } %>
+              </div>
+
+              <!-- Right column - Appointment & match info -->
+              <div>
+                <div class="bg-blue-50 p-4 rounded-lg mb-6">
+                  <h2 class="text-lg font-semibold mb-4">Appointment Details</h2>
+                  <div class="space-y-3">
+                    <div>
+                      <p class="text-sm text-gray-500 mb-1">Day:</p>
+                      <p class="font-medium"><%= allocation.appointmentDay || "Not scheduled" %></p>
+                    </div>
+                    <div>
+                      <p class="text-sm text-gray-500 mb-1">Time:</p>
+                      <p class="font-medium"><%= allocation.appointmentTime || "Not scheduled" %></p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Match explanation -->
+                <div class="bg-yellow-50 p-4 rounded-lg">
+                  <h2 class="text-lg font-semibold mb-4">Match Information</h2>
+                  <% if (allocation.matchReason) { %>
+                    <div>
+                      <p class="text-sm text-gray-500 mb-1">Reason for Match:</p>
+                      <p class="text-sm"><%= allocation.matchReason %></p>
+                    </div>
+                  <% } else if (allocation.note) { %>
+                    <div>
+                      <p class="text-sm text-gray-500 mb-1">Notes:</p>
+                      <p class="text-sm"><%= allocation.note %></p>
+                    </div>
+                  <% } else { %>
+                    <p class="text-sm">
+                      This therapist was selected based on specialty match, availability, 
+                      language compatibility, and current caseload.
+                    </p>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% } %>
+
+        <!-- Action buttons -->
+        <div class="bg-gray-50 px-6 py-4 flex justify-between">
+          <a href="/patients" class="text-blue-600 hover:text-blue-800 font-medium">
+            Back to Patients
+          </a>
+          <% if (patientId && allocation.success) { %>
+            <a href="/patients/<%= patientId %>/edit" class="text-blue-600 hover:text-blue-800 font-medium">
+              Edit Patient
+            </a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Optional JavaScript for the page
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Allocation result page loaded');
+    });
+  </script>
+</body>
+</html>
